@@ -1,0 +1,21 @@
+# Environment files (NEVER commit!)
+.env
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+__pycache__/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
