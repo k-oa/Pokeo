@@ -8,7 +8,51 @@ import { Dex } from "@pkmn/sim";
 const gens = new Generations(Dex as any);
 const battles: Record<string, any> = {};
 
-function printLog(battle: any, formatter: any, client: any, fromIndex = 0) {
+function getAvailableMoves(side: any): {
+    moves: string[];
+    canSwitch: string[];
+} {
+    const request = side.activeRequest;
+
+    if (!request || request.wait) return { moves: [], canSwitch: [] };
+
+    if (request.forceSwitch) {
+        const canSwitch: string[] = [];
+        for (let i = 0; i < request.side.pokemon.length; i++) {
+            const p = request.side.pokemon[i];
+            if (!p.active && !p.condition.endsWith(" fnt")) {
+                canSwitch.push(`switch ${i + 1}`);
+            }
+        }
+        return { moves: [], canSwitch };
+    }
+
+    const moves: string[] = [];
+    for (let i = 0; i < request.active[0].moves.length; i++) {
+        if (!request.active[0].moves[i].disabled) {
+            moves.push(`move ${i + 1}`);
+        }
+    }
+
+    const canSwitch: string[] = [];
+    for (let i = 0; i < request.side.pokemon.length; i++) {
+        const p = request.side.pokemon[i];
+        if (!p.active && !p.condition.endsWith(" fnt")) {
+            canSwitch.push(`switch ${i + 1}`);
+        }
+    }
+
+    return { moves, canSwitch };
+}
+
+function pickRandomChoice(side: any): string {
+    const { moves, canSwitch } = getAvailableMoves(side);
+    console.log(moves, canSwitch);
+    const options = moves.length > 0 ? moves : canSwitch;
+    return options[Math.floor(Math.random() * options.length)];
+}
+
+function getLog(battle: any, formatter: any, client: any, fromIndex = 0) {
     let completeLog: string[] = [];
     let skipNext = false;
     for (const line of battle.log.slice(fromIndex)) {
@@ -79,13 +123,13 @@ export function makeChoice(
     if (p1Choice) session.battle.choose("p1", p1Choice);
     if (p2Choice) session.battle.choose("p2", p2Choice);
 
-    const p1Log = printLog(
+    const p1Log = getLog(
         session.battle,
         session.p1formatter,
         session.p1client,
         logIndexBefore
     );
-    const p2Log = printLog(
+    const p2Log = getLog(
         session.battle,
         session.p2formatter,
         session.p2client,
@@ -100,42 +144,6 @@ export function makeChoice(
         ended: session.battle.ended,
         winner: session.battle.winner,
     };
-}
-
-// ─── AI helpers ──────────────────────────────────────────────────────────────
-
-function getAvailableMoves(side: any): {
-    moves: string[];
-    canSwitch: string[];
-} {
-    const request = side.activeRequest;
-
-    if (!request || request.wait) return { moves: [], canSwitch: [] };
-
-    if (request.forceSwitch) {
-        const canSwitch: string[] = [];
-        for (let i = 0; i < request.side.pokemon.length; i++) {
-            const p = request.side.pokemon[i];
-            if (!p.active && !p.condition.endsWith(" fnt")) {
-                canSwitch.push(`switch ${i + 1}`);
-            }
-        }
-        return { moves: [], canSwitch };
-    }
-
-    const moves: string[] = [];
-    for (let i = 0; i < request.active[0].moves.length; i++) {
-        if (!request.active[0].moves[i].disabled) {
-            moves.push(`move ${i + 1}`);
-        }
-    }
-    return { moves, canSwitch: [] };
-}
-
-function pickRandomChoice(side: any): string {
-    const { moves, canSwitch } = getAvailableMoves(side);
-    const options = moves.length > 0 ? moves : canSwitch;
-    return options[Math.floor(Math.random() * options.length)];
 }
 
 // ─── Simulation ──────────────────────────────────────────────────────────────

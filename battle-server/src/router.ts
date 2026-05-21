@@ -7,16 +7,6 @@ router.get("/health", (req, res) => {
     res.json({ status: "ok" });
 });
 
-router.get("/test", (req, res) => {
-    res.json({
-        string: "ok",
-        dic: { name: "test" },
-        bool: null,
-        num: 123,
-        arr: [1, 2, 3],
-    });
-});
-
 router.post("/battle/create", (req, res) => {
     console.log(req.body);
     const { options, p1, p2 } = req.body;
