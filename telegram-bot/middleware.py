@@ -23,6 +23,7 @@ class MessageMiddleware(BaseMiddleware):
         if player_data.status == PlayerStatus.BANNED:
             return
 
+        data["player"] = player_data
         return await handler(event, data)
 
 
