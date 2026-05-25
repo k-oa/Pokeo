@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { Dex } from "@pkmn/sim";
 import { createBattle, makeChoice } from "./battle";
 
 const router = Router();
@@ -24,5 +25,17 @@ router.post("/battle/create", (req, res) => {
 //     const result = makeChoice(req.params.id, p1Choice, p2Choice);
 //     res.json(result);
 // });
+
+router.get("/pokedex/:name", (req, res) => {
+    const data = Dex.species.get(req.params.name);
+    if (!data.exists) return res.status(404).json({ error: "Not found" });
+    res.json(data);
+});
+
+router.get("/learnset/:name", async (req, res) => {
+    const learnset = await Dex.learnsets.get(req.params.name);
+    if (!learnset) return res.status(404).json({ error: "Not found" });
+    res.json(learnset.learnset);
+});
 
 export default router;

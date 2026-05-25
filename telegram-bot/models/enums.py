@@ -6,3 +6,10 @@ class PlayerStatus(Enum):
     ACTIVE = "active"
     BANNED = "banned"
     ADMIN = "admin"
+
+
+class Gender(Enum):
+    BOTH = "both"
+    MALE = "male"
+    FEMALE = "female"
+    GENDERLESS = "genderless"
