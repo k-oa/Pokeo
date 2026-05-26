@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from models.enums import PlayerStatus
+from models.player import PlayerStatus
 
 
 @dataclass
