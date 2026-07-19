@@ -35,14 +35,7 @@ class PokedexEntry:
             case _:
                 gender = Gender.BOTH
             
-        stats = Stats(
-            hp=data['baseStats']['hp'],
-            attack=data['baseStats']['atk'],
-            defense=data['baseStats']['def'],
-            special_attack=data['baseStats']['spa'],
-            special_defense=data['baseStats']['spd'],
-            speed=data['baseStats']['spe'],
-        )
+        stats = Stats.from_dict(data['baseStats'])
 
         return cls(
             name=data['baseSpecies'],
@@ -84,8 +77,8 @@ class Pokemon:
             gender=data['gender'],
             level=data['level'],
             experience=data['experience'],
-            iv=Stats(data['iv']['hp'], data['iv']['atk'], data['iv']['def'], data['iv']['spa'], data['iv']['spd'], data['iv']['spe']),
-            ev=Stats(data['ev']['hp'], data['ev']['atk'], data['ev']['def'], data['ev']['spa'], data['ev']['spd'], data['ev']['spe']),
+            iv=Stats.from_dict(data['iv']),
+            ev=Stats.from_dict(data['ev']),
             nature=Nature(data['nature']),
             ability=data['ability'],
             moves=data['moves'],
@@ -94,22 +87,8 @@ class Pokemon:
         )
     
     def to_dict(self) -> dict:
-        iv = {
-            'hp': self.iv.hp,
-            'atk': self.iv.attack,
-            'def': self.iv.defense,
-            'spa': self.iv.special_attack,
-            'spd': self.iv.special_defense,
-            'spe': self.iv.speed
-        }
-        ev = {
-            'hp': self.ev.hp,
-            'atk': self.ev.attack,
-            'def': self.ev.defense,
-            'spa': self.ev.special_attack,
-            'spd': self.ev.special_defense,
-            'spe': self.ev.speed
-        }
+        iv = self.iv.to_dict()
+        ev = self.ev.to_dict()
         
         return {
             '_id': self.uid,
